@@ -3,9 +3,6 @@ package co.edu.udea.compumovil.gr10.ws;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
@@ -15,7 +12,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import co.edu.udea.compumovil.gr10.ws.entities.Clima;
 import co.edu.udea.compumovil.gr10.ws.weatherservice.WeatherHttpClient;
+
+import com.squareup.picasso.Picasso;
 
 public class WeatherActivity extends Activity {
 	private TextView city, temp, description;
@@ -28,23 +28,21 @@ public class WeatherActivity extends Activity {
 		setContentView(R.layout.activity_weather);
 		city = (TextView) findViewById(R.id.city);
 		temp = (TextView) findViewById(R.id.temp);
-		inputCity = (EditText)findViewById(R.id.editCiudad);
-		description= (TextView)findViewById(R.id.description);
-		weatherImage= (ImageView)findViewById(R.id.weather_image);
-		
-		
-		
+		inputCity = (EditText) findViewById(R.id.editCiudad);
+		description = (TextView) findViewById(R.id.description);
+		weatherImage = (ImageView) findViewById(R.id.weather_image);
+
 	}
-	public void buscarCiudad(View view){
+
+	public void buscarCiudad(View view) {
 		new WeatherTask().execute(inputCity.getText().toString());
 	}
 
 	private class WeatherTask extends AsyncTask<String, Void, Void> {
 		private static final String TAG = "WeatherTask";
-			private String Error = null;
+		private String Error = null;
 		private ProgressDialog Dialog = new ProgressDialog(WeatherActivity.this);
-		String data = "";
-		
+		private Clima clima;
 
 		@Override
 		protected void onPreExecute() {
@@ -61,8 +59,8 @@ public class WeatherActivity extends Activity {
 			// BufferedReader reader=null;
 			// Send data
 			try {
-				data = ((new WeatherHttpClient()).getWeatherData(params[0]));
-				Log.v(TAG, "Info:" + data);
+				clima = new WeatherHttpClient().getWeatherDataObject(params[0]);
+				Log.v(TAG, clima.getName());
 			} catch (Exception ex) {
 				Error = ex.getMessage();
 			}
@@ -81,37 +79,30 @@ public class WeatherActivity extends Activity {
 				/******************
 				 * Start Parse Response JSON Data
 				 *************/
-				String OutputData = "";
-				String nameImage= "";
-				JSONObject jsonResponse;
+				
+				String nameImage = "";
+			//	JSONObject jsonResponse;
 				try {
 					/******
 					 * Creates a new JSONObject with name/value mappings from
 					 * the JSON string.
 					 ********/
-					jsonResponse = new JSONObject(data);
+					//jsonResponse = new JSONObject(data);
 					/*****
 					 * Returns the value mapped by name if it exists and is a
 					 * JSONArray.
 					 ***/
 					/******* Returns null otherwise. *******/
 					// JSONArray jsonMainNode =
-					jsonResponse.optJSONArray("Android");
-					OutputData = jsonResponse.optString("name").toString();
-					// Log.v("City", OutputData);
-					city.setText(OutputData);
-					OutputData = jsonResponse.getJSONObject("main")
-							.optString("temp").toString();
 					
-					temp.setText(OutputData + "°C");
-					OutputData = jsonResponse.getJSONArray("weather")
-							.getJSONObject(0).optString("main").toString();
-					nameImage = jsonResponse.getJSONArray("weather")
-							.getJSONObject(0).optString("icon").toString();
+					city.setText(clima.getName());
+					temp.setText(clima.getMain().getTemp() + "°C");
+					nameImage= clima.getWeather().get(0).getIcon();
 					Picasso.with(getApplicationContext())
-					.load(WeatherHttpClient.getURLImage(nameImage)).into(weatherImage);
-					description.setText(OutputData);
-				} catch (JSONException e) {
+							.load(WeatherHttpClient.getURLImage(nameImage))
+							.into(weatherImage);
+					description.setText(clima.getWeather().get(0).getDescription());
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}

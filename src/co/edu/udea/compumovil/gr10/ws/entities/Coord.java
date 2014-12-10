@@ -1,18 +1,22 @@
 package co.edu.udea.compumovil.gr10.ws.entities;
 
-public class Cord {
-	private String lon;
-	private String lat;
-	public String getLon() {
+public class Coord {
+	private float lon;
+	private float lat;
+
+	public float getLon() {
 		return lon;
 	}
-	public void setLon(String lon) {
+
+	public void setLon(float lon) {
 		this.lon = lon;
 	}
-	public String getLat() {
+
+	public float getLat() {
 		return lat;
 	}
-	public void setLat(String lat) {
+
+	public void setLat(float lat) {
 		this.lat = lat;
 	}
 

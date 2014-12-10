@@ -7,6 +7,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import com.google.gson.Gson;
+
+import co.edu.udea.compumovil.gr10.ws.entities.Clima;
+
 public class WeatherHttpClient {
 	private static String BASE_URL = "http://api.openweathermap.org/data/2.5/weather?units=metric&q=";
 	private static String IMG_URL = "http://openweathermap.org/img/w/";
@@ -49,6 +53,13 @@ public class WeatherHttpClient {
 		}
 		return null;
 	}
+	public Clima getWeatherDataObject(String location){
+		String json= this.getWeatherData(location);
+		Gson gson = new Gson();
+		Clima clima = gson.fromJson(json, Clima.class);
+		return clima;
+	}
+	
 	public static String getURLImage(String image){
 		return IMG_URL+image+".png";
 	}

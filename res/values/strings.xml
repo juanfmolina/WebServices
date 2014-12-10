@@ -5,5 +5,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="weather_button">Buscar</string>
+    <string name="chooseCity">Ingrese el lugar de la información</string>
 
 </resources>
